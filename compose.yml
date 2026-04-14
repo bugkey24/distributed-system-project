@@ -1,0 +1,88 @@
+# ==========================================================
+# Extension fields for reuse (Anchors)
+# ==========================================================
+x-backend-base: &backend_base
+  build:
+    context: .
+    dockerfile: docker/php/Dockerfile
+  restart: unless-stopped
+  env_file: .env
+  volumes:
+    - ./src:/var/www/html
+  networks:
+    - distributed-network
+  depends_on:
+    mysql:
+      condition: service_healthy
+
+# ==========================================================
+# Services
+# ==========================================================
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: distributed-mysql
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - distributed-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  backend1:
+    <<: *backend_base
+    container_name: distributed-backend-1
+    hostname: backend-01
+
+  backend2:
+    <<: *backend_base
+    container_name: distributed-backend-2
+    hostname: backend-02
+
+  backend3:
+    <<: *backend_base
+    container_name: distributed-backend-3
+    hostname: backend-03
+
+  nginx:
+    image: nginx:alpine
+    container_name: distributed-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+      - "8001:8001"
+      - "8002:8002"
+      - "8003:8003"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./src/public:/var/www/html/public:ro
+    networks:
+      - distributed-network
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+
+networks:
+  distributed-network:
+    driver: bridge
+    name: distributed-network
+
+volumes:
+  mysql-data:
+    driver: local
+    name: distributed-mysql-data

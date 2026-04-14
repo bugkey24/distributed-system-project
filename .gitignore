@@ -1,0 +1,32 @@
+# Docker
+.docker/
+docker-compose.override.yml
+.env
+
+# Laravel
+/src/vendor/
+/src/node_modules/
+/src/public/storage
+/src/public/hot
+/src/storage/*.key
+/src/storage/framework/cache/data/*
+/src/storage/framework/sessions/*
+/src/storage/framework/testing/*
+/src/storage/framework/views/*
+/src/storage/logs/*
+/src/.env
+/src/.env.*
+/src/auth.json
+/src/npm-debug.log
+/src/yarn-error.log
+/src/.phpunit.result.cache
+
+# Database
+/src/database/*.sqlite
+/src/database/*.sqlite-journal
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

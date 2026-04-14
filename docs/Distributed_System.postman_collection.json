@@ -1,0 +1,141 @@
+{
+	"info": {
+		"_postman_id": "d0e1f2a3-b4c5-4d6e-8f9a-0b1c2d3e4f5a",
+		"name": "Distributed System Project",
+		"description": "Collection for testing the Distributed System REST API (Laravel + Nginx Load Balancer).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Server Information",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/server-info",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"server-info"
+					]
+				},
+				"description": "Returns the identity and container metadata of the backend server that handled the request."
+			},
+			"response": []
+		},
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"health"
+					]
+				},
+				"description": "Basic health check endpoint."
+			},
+			"response": []
+		},
+		{
+			"name": "Store Request (Log)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\": \"Hello from Postman!\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/requests",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"requests"
+					]
+				},
+				"description": "Saves a message to the shared database and logs the handling container."
+			},
+			"response": []
+		},
+		{
+			"name": "List Request Logs",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/requests",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"requests"
+					]
+				},
+				"description": "Retrieves the history of request logs across all backend instances."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
